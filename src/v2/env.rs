@@ -1,6 +1,6 @@
 //! CVSS v2 environmental metrics
 
-use crate::common::{NumValue, Optional, ParseError};
+use crate::common::{optional_metric, NumValue, ParseError};
 use std::str;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -93,14 +93,7 @@ impl NumValue for CollateralDamagePotential {
     }
 }
 
-impl Optional for CollateralDamagePotential {
-    fn is_undefined(&self) -> bool {
-        match self {
-            CollateralDamagePotential::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { CollateralDamagePotential::NotDefined }
 
 impl AsRef<str> for TargetDistribution {
     fn as_ref(&self) -> &str {
@@ -140,15 +133,7 @@ impl NumValue for TargetDistribution {
         }
     }
 }
-
-impl Optional for TargetDistribution {
-    fn is_undefined(&self) -> bool {
-        match self {
-            TargetDistribution::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { TargetDistribution::NotDefined }
 
 impl AsRef<str> for ConfidentialityRequirement {
     fn as_ref(&self) -> &str {
@@ -186,14 +171,7 @@ impl NumValue for ConfidentialityRequirement {
     }
 }
 
-impl Optional for ConfidentialityRequirement {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ConfidentialityRequirement::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ConfidentialityRequirement::NotDefined }
 
 impl AsRef<str> for IntegrityRequirement {
     fn as_ref(&self) -> &str {
@@ -231,14 +209,7 @@ impl NumValue for IntegrityRequirement {
     }
 }
 
-impl Optional for IntegrityRequirement {
-    fn is_undefined(&self) -> bool {
-        match self {
-            IntegrityRequirement::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { IntegrityRequirement::NotDefined }
 
 impl AsRef<str> for AvailabilityRequirement {
     fn as_ref(&self) -> &str {
@@ -276,11 +247,4 @@ impl NumValue for AvailabilityRequirement {
     }
 }
 
-impl Optional for AvailabilityRequirement {
-    fn is_undefined(&self) -> bool {
-        match self {
-            AvailabilityRequirement::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { AvailabilityRequirement::NotDefined }

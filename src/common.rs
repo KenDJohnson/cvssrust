@@ -25,7 +25,7 @@ pub trait CVSSScore {
 /// Base/Temporal/Environmental CVSS Score
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
-pub struct Score(f64);
+pub struct Score(pub(crate) f64);
 
 impl Score {
     pub fn value(self) -> f64 {
@@ -109,7 +109,24 @@ impl fmt::Display for ParseError {
     }
 }
 
-pub trait Optional {
+macro_rules! optional_metric {
+    ($t:ident :: $v:ident) => {
+        impl $crate::common::Optional for $t {
+            fn is_undefined(&self) -> bool {
+                matches!(self, $t::$v)
+            }
+        }
+
+        impl Default for $t {
+            fn default() -> Self {
+                Self::$v
+            }
+        }
+    };
+}
+pub(crate) use optional_metric;
+
+pub trait Optional: Default {
     fn is_undefined(&self) -> bool;
 }
 
@@ -133,7 +150,11 @@ pub fn append_metric<T: AsRef<str>>(vector: &mut String, metric: &str, value: &T
 }
 
 /// Append metric and its value to a vector string if it is not undefined (for optionsl metrics).
-pub fn append_metric_optional<T: AsRef<str> + Optional>(vector: &mut String, metric: &str, value: &T) {
+pub fn append_metric_optional<T: AsRef<str> + Optional>(
+    vector: &mut String,
+    metric: &str,
+    value: &T,
+) {
     if !value.is_undefined() {
         append_metric(vector, metric, value);
     }
@@ -185,3 +206,69 @@ mod tests {
         assert_eq!(Score(4.5).severity(), Severity::Medium);
     }
 }
+
+pub trait CvssMetric: std::str::FromStr<Err = ParseError> {
+    const METRIC_NAME: &'static str;
+    const ABBREVIATED_FORM: &'static str;
+    // const VALUES: &'static [&'static str];
+
+    fn as_str(&self) -> &'static str;
+}
+
+macro_rules! cvss_metric {
+    ($(#[$attr:meta])* $pub:vis enum $t:ident $name:literal $short:literal { $( $(#[$vattr:meta])* $variant:ident : $num:literal => $s:literal ),+ $(,)? }) => {
+        $(#[$attr])*
+        $pub enum $t {
+            $($(#[$vattr])* $variant),+
+
+        }
+
+        impl $crate::common::CvssMetric for $t {
+            const METRIC_NAME: &'static str = $name;
+            const ABBREVIATED_FORM: &'static str = $short;
+            // const VALUES: &'static [&'static str];
+
+            fn as_str(&self) -> &'static str {
+                match self {
+                    $(Self::$variant => $s,)+
+                }
+            }
+        }
+
+        impl std::str::FromStr for $t {
+            type Err = $crate::common::ParseError;
+
+            fn from_str(value: &str) -> Result<Self, Self::Err> {
+                match value {
+                    $($s => Ok(Self::$variant),)+
+                    _ => Err($crate::common::ParseError::IncorrectValue),
+                }
+            }
+        }
+
+        impl AsRef<str> for $t {
+            fn as_ref(&self) -> &str {
+                $crate::common::CvssMetric::as_str(self)
+            }
+        }
+
+        impl $crate::v4::V4Metric for $t {
+            // fn distance(&self, other: &Self) -> i8 {
+            //     let self_num = (*self) as u8 as i8;
+            //     let other_num = (*other) as u8 as i8;
+            //     self_num - other_num
+            //     // if self_num > other_num {
+            //     //     self_num - other_num
+            //     // } else {
+            //     //     other_num - self_num
+            //     // }
+            // }
+            fn level(&self) -> i8 {
+                match self {
+                    $(Self::$variant => $num),+
+                }
+            }
+        }
+    };
+}
+pub(crate) use cvss_metric;

@@ -1,68 +1,82 @@
 //! CVSS v3 environmental metrics
 
-use crate::common::{NumValue, Optional, ParseError};
+use crate::common::{cvss_metric, optional_metric, NumValue, ParseError};
 use std::str;
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum ConfidentialityRequirement {
-    NotDefined,
-    High,
-    Medium,
-    Low,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum ConfidentialityRequirement "Confidentiality Requirement" "CR" {
+        NotDefined: 0 => "X",
+        High: 0 => "H",
+        Medium: 1 => "M",
+        Low: 2 => "L",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum IntegrityRequirement {
-    NotDefined,
-    High,
-    Medium,
-    Low,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum IntegrityRequirement "Integrity Requirement" "IR" {
+        NotDefined: 0 => "X",
+        High: 0 => "H",
+        Medium: 1 => "M",
+        Low: 2 => "L",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum AvailabilityRequirement {
-    NotDefined,
-    High,
-    Medium,
-    Low,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum AvailabilityRequirement "Availability Requirement" "AR" {
+        NotDefined: 0 => "X",
+        High: 0 => "H",
+        Medium: 1 => "M",
+        Low: 2 => "L",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum ModifiedAttackVector {
-    NotDefined,
-    Network,
-    Adjacent,
-    Local,
-    Physical,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum ModifiedAttackVector "Modified Attack Vector" "MAV" {
+        NotDefined: 0 => "X",
+        Network: 0 => "N",
+        Adjacent: 1 => "A",
+        Local: 2 => "L",
+        Physical: 3 => "P",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum ModifiedAttackComplexity {
-    NotDefined,
-    Low,
-    High,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum ModifiedAttackComplexity "Modified Attack Complexity" "MAC" {
+        NotDefined: 0 => "X",
+        Low: 0 => "L",
+        High: 1 => "H",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum ModifiedPrivilegesRequired {
-    NotDefined,
-    None,
-    Low,
-    High,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum ModifiedPrivilegesRequired "Modified Privileges Required" "MPR"{
+        NotDefined: 0 => "X",
+        None: 0 => "N",
+        Low: 1 => "L",
+        High: 2 => "H",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum ModifiedUserInteraction {
-    NotDefined,
-    None,
-    Required,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    pub enum ModifiedUserInteraction "Modified User Interaction" "MUI" {
+        NotDefined: 0 => "X",
+        None: 0 => "N",
+        Required: 1 => "R",
+    }
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -100,31 +114,6 @@ pub enum ModifiedAvailability {
     High,
 }
 
-impl AsRef<str> for ConfidentialityRequirement {
-    fn as_ref(&self) -> &str {
-        match self {
-            ConfidentialityRequirement::NotDefined => "X",
-            ConfidentialityRequirement::High => "H",
-            ConfidentialityRequirement::Medium => "M",
-            ConfidentialityRequirement::Low => "L",
-        }
-    }
-}
-
-impl str::FromStr for ConfidentialityRequirement {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(ConfidentialityRequirement::NotDefined),
-            "H" => Ok(ConfidentialityRequirement::High),
-            "M" => Ok(ConfidentialityRequirement::Medium),
-            "L" => Ok(ConfidentialityRequirement::Low),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
-
 impl NumValue for ConfidentialityRequirement {
     fn num_value(&self) -> f64 {
         match self {
@@ -136,39 +125,7 @@ impl NumValue for ConfidentialityRequirement {
     }
 }
 
-impl Optional for ConfidentialityRequirement {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ConfidentialityRequirement::NotDefined => true,
-            _ => false,
-        }
-    }
-}
-
-impl AsRef<str> for IntegrityRequirement {
-    fn as_ref(&self) -> &str {
-        match self {
-            IntegrityRequirement::NotDefined => "X",
-            IntegrityRequirement::High => "H",
-            IntegrityRequirement::Medium => "M",
-            IntegrityRequirement::Low => "L",
-        }
-    }
-}
-
-impl str::FromStr for IntegrityRequirement {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(IntegrityRequirement::NotDefined),
-            "H" => Ok(IntegrityRequirement::High),
-            "M" => Ok(IntegrityRequirement::Medium),
-            "L" => Ok(IntegrityRequirement::Low),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
+optional_metric! { ConfidentialityRequirement::NotDefined }
 
 impl NumValue for IntegrityRequirement {
     fn num_value(&self) -> f64 {
@@ -181,39 +138,7 @@ impl NumValue for IntegrityRequirement {
     }
 }
 
-impl Optional for IntegrityRequirement {
-    fn is_undefined(&self) -> bool {
-        match self {
-            IntegrityRequirement::NotDefined => true,
-            _ => false,
-        }
-    }
-}
-
-impl AsRef<str> for AvailabilityRequirement {
-    fn as_ref(&self) -> &str {
-        match self {
-            AvailabilityRequirement::NotDefined => "X",
-            AvailabilityRequirement::High => "H",
-            AvailabilityRequirement::Medium => "M",
-            AvailabilityRequirement::Low => "L",
-        }
-    }
-}
-
-impl str::FromStr for AvailabilityRequirement {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(AvailabilityRequirement::NotDefined),
-            "H" => Ok(AvailabilityRequirement::High),
-            "M" => Ok(AvailabilityRequirement::Medium),
-            "L" => Ok(AvailabilityRequirement::Low),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
+optional_metric! { IntegrityRequirement::NotDefined }
 
 impl NumValue for AvailabilityRequirement {
     fn num_value(&self) -> f64 {
@@ -226,41 +151,7 @@ impl NumValue for AvailabilityRequirement {
     }
 }
 
-impl Optional for AvailabilityRequirement {
-    fn is_undefined(&self) -> bool {
-        match self {
-            AvailabilityRequirement::NotDefined => true,
-            _ => false,
-        }
-    }
-}
-
-impl AsRef<str> for ModifiedAttackVector {
-    fn as_ref(&self) -> &str {
-        match self {
-            ModifiedAttackVector::NotDefined => "X",
-            ModifiedAttackVector::Network => "N",
-            ModifiedAttackVector::Adjacent => "A",
-            ModifiedAttackVector::Local => "L",
-            ModifiedAttackVector::Physical => "P",
-        }
-    }
-}
-
-impl str::FromStr for ModifiedAttackVector {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(ModifiedAttackVector::NotDefined),
-            "N" => Ok(ModifiedAttackVector::Network),
-            "A" => Ok(ModifiedAttackVector::Adjacent),
-            "L" => Ok(ModifiedAttackVector::Local),
-            "P" => Ok(ModifiedAttackVector::Physical),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
+optional_metric! { AvailabilityRequirement::NotDefined }
 
 impl NumValue for ModifiedAttackVector {
     fn num_value(&self) -> f64 {
@@ -274,37 +165,7 @@ impl NumValue for ModifiedAttackVector {
     }
 }
 
-impl Optional for ModifiedAttackVector {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedAttackVector::NotDefined => true,
-            _ => false,
-        }
-    }
-}
-
-impl AsRef<str> for ModifiedAttackComplexity {
-    fn as_ref(&self) -> &str {
-        match self {
-            ModifiedAttackComplexity::NotDefined => "X",
-            ModifiedAttackComplexity::Low => "L",
-            ModifiedAttackComplexity::High => "H",
-        }
-    }
-}
-
-impl str::FromStr for ModifiedAttackComplexity {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(ModifiedAttackComplexity::NotDefined),
-            "L" => Ok(ModifiedAttackComplexity::Low),
-            "H" => Ok(ModifiedAttackComplexity::High),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
+optional_metric! { ModifiedAttackVector::NotDefined }
 
 impl NumValue for ModifiedAttackComplexity {
     fn num_value(&self) -> f64 {
@@ -316,39 +177,7 @@ impl NumValue for ModifiedAttackComplexity {
     }
 }
 
-impl Optional for ModifiedAttackComplexity {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedAttackComplexity::NotDefined => true,
-            _ => false,
-        }
-    }
-}
-
-impl AsRef<str> for ModifiedPrivilegesRequired {
-    fn as_ref(&self) -> &str {
-        match self {
-            ModifiedPrivilegesRequired::NotDefined => "X",
-            ModifiedPrivilegesRequired::None => "N",
-            ModifiedPrivilegesRequired::Low => "L",
-            ModifiedPrivilegesRequired::High => "H",
-        }
-    }
-}
-
-impl str::FromStr for ModifiedPrivilegesRequired {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(ModifiedPrivilegesRequired::NotDefined),
-            "N" => Ok(ModifiedPrivilegesRequired::None),
-            "L" => Ok(ModifiedPrivilegesRequired::Low),
-            "H" => Ok(ModifiedPrivilegesRequired::High),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
+optional_metric! { ModifiedAttackComplexity::NotDefined }
 
 impl NumValue for ModifiedPrivilegesRequired {
     fn num_value(&self) -> f64 {
@@ -377,37 +206,7 @@ impl NumValue for ModifiedPrivilegesRequired {
     }
 }
 
-impl Optional for ModifiedPrivilegesRequired {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedPrivilegesRequired::NotDefined => true,
-            _ => false,
-        }
-    }
-}
-
-impl AsRef<str> for ModifiedUserInteraction {
-    fn as_ref(&self) -> &str {
-        match self {
-            ModifiedUserInteraction::NotDefined => "X",
-            ModifiedUserInteraction::None => "N",
-            ModifiedUserInteraction::Required => "R",
-        }
-    }
-}
-
-impl str::FromStr for ModifiedUserInteraction {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "X" => Ok(ModifiedUserInteraction::NotDefined),
-            "N" => Ok(ModifiedUserInteraction::None),
-            "R" => Ok(ModifiedUserInteraction::Required),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
+optional_metric! { ModifiedPrivilegesRequired::NotDefined }
 
 impl NumValue for ModifiedUserInteraction {
     fn num_value(&self) -> f64 {
@@ -419,14 +218,7 @@ impl NumValue for ModifiedUserInteraction {
     }
 }
 
-impl Optional for ModifiedUserInteraction {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedUserInteraction::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ModifiedUserInteraction::NotDefined }
 
 impl AsRef<str> for ModifiedScope {
     fn as_ref(&self) -> &str {
@@ -451,14 +243,7 @@ impl str::FromStr for ModifiedScope {
     }
 }
 
-impl Optional for ModifiedScope {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedScope::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ModifiedScope::NotDefined }
 
 impl AsRef<str> for ModifiedConfidentiality {
     fn as_ref(&self) -> &str {
@@ -496,14 +281,7 @@ impl NumValue for ModifiedConfidentiality {
     }
 }
 
-impl Optional for ModifiedConfidentiality {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedConfidentiality::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ModifiedConfidentiality::NotDefined }
 
 impl AsRef<str> for ModifiedIntegrity {
     fn as_ref(&self) -> &str {
@@ -541,14 +319,7 @@ impl NumValue for ModifiedIntegrity {
     }
 }
 
-impl Optional for ModifiedIntegrity {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedIntegrity::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ModifiedIntegrity::NotDefined }
 
 impl AsRef<str> for ModifiedAvailability {
     fn as_ref(&self) -> &str {
@@ -586,11 +357,4 @@ impl NumValue for ModifiedAvailability {
     }
 }
 
-impl Optional for ModifiedAvailability {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ModifiedAvailability::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ModifiedAvailability::NotDefined }

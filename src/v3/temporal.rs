@@ -1,6 +1,6 @@
 //! CVSS v3 temporal metrics
 
-use crate::common::{NumValue, Optional, ParseError};
+use crate::common::{optional_metric, NumValue, ParseError};
 use std::str;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -71,14 +71,7 @@ impl NumValue for ExploitCodeMaturity {
     }
 }
 
-impl Optional for ExploitCodeMaturity {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ExploitCodeMaturity::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ExploitCodeMaturity::NotDefined }
 
 impl AsRef<str> for RemediationLevel {
     fn as_ref(&self) -> &str {
@@ -119,14 +112,7 @@ impl NumValue for RemediationLevel {
     }
 }
 
-impl Optional for RemediationLevel {
-    fn is_undefined(&self) -> bool {
-        match self {
-            RemediationLevel::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { RemediationLevel::NotDefined }
 
 impl AsRef<str> for ReportConfidence {
     fn as_ref(&self) -> &str {
@@ -164,11 +150,4 @@ impl NumValue for ReportConfidence {
     }
 }
 
-impl Optional for ReportConfidence {
-    fn is_undefined(&self) -> bool {
-        match self {
-            ReportConfidence::NotDefined => true,
-            _ => false,
-        }
-    }
-}
+optional_metric! { ReportConfidence::NotDefined }

@@ -24,6 +24,8 @@
 mod common;
 pub mod v2;
 pub mod v3;
+#[macro_use]
+pub mod v4;
 
 #[cfg(feature = "serde")]
 #[macro_use]

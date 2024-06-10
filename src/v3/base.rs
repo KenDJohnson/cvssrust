@@ -1,37 +1,53 @@
 //! CVSS v3 base metrics
 
+use crate::common::cvss_metric;
+
 use crate::common::{NumValue, ParseError};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::str;
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum AttackVector {
-    Network,
-    Adjacent,
-    Local,
-    Physical,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    #[repr(u8)]
+    pub enum AttackVector "Attack Vector" "AV" {
+        Network: 0 => "N",
+        Adjacent: 1 => "A",
+        Local: 2 => "L",
+        Physical: 3 => "P",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum AttackComplexity {
-    Low,
-    High,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    #[repr(u8)]
+    pub enum AttackComplexity "Attack Complexity" "AC" {
+        Low: 0 => "L",
+        High: 1 => "H",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum PrivilegesRequired {
-    None,
-    Low,
-    High,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    #[repr(u8)]
+    pub enum PrivilegesRequired "Privileges Required" "PR" {
+        None: 0 => "N",
+        Low: 1 => "L",
+        High: 2 => "H",
+    }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub enum UserInteraction {
-    None,
-    Required,
+cvss_metric! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+    #[repr(u8)]
+    pub enum UserInteraction "User Interaction" "UI" {
+        None: 0 => "N",
+        Required: 1 => "R",
+    }
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -65,31 +81,6 @@ pub enum Availability {
     None,
 }
 
-impl AsRef<str> for AttackVector {
-    fn as_ref(&self) -> &str {
-        match self {
-            AttackVector::Network => "N",
-            AttackVector::Adjacent => "A",
-            AttackVector::Local => "L",
-            AttackVector::Physical => "P",
-        }
-    }
-}
-
-impl str::FromStr for AttackVector {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "N" => Ok(AttackVector::Network),
-            "A" => Ok(AttackVector::Adjacent),
-            "L" => Ok(AttackVector::Local),
-            "P" => Ok(AttackVector::Physical),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
-
 impl NumValue for AttackVector {
     fn num_value(&self) -> f64 {
         match self {
@@ -101,55 +92,11 @@ impl NumValue for AttackVector {
     }
 }
 
-impl AsRef<str> for AttackComplexity {
-    fn as_ref(&self) -> &str {
-        match self {
-            AttackComplexity::Low => "L",
-            AttackComplexity::High => "H",
-        }
-    }
-}
-
-impl str::FromStr for AttackComplexity {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "L" => Ok(AttackComplexity::Low),
-            "H" => Ok(AttackComplexity::High),
-            _ => Err(ParseError::IncorrectValue),
-        }
-    }
-}
-
 impl NumValue for AttackComplexity {
     fn num_value(&self) -> f64 {
         match self {
             AttackComplexity::Low => 0.77,
             AttackComplexity::High => 0.44,
-        }
-    }
-}
-
-impl AsRef<str> for PrivilegesRequired {
-    fn as_ref(&self) -> &str {
-        match self {
-            PrivilegesRequired::None => "N",
-            PrivilegesRequired::Low => "L",
-            PrivilegesRequired::High => "H",
-        }
-    }
-}
-
-impl str::FromStr for PrivilegesRequired {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "N" => Ok(PrivilegesRequired::None),
-            "L" => Ok(PrivilegesRequired::Low),
-            "H" => Ok(PrivilegesRequired::High),
-            _ => Err(ParseError::IncorrectValue),
         }
     }
 }
@@ -176,27 +123,6 @@ impl NumValue for PrivilegesRequired {
                     0.27
                 }
             }
-        }
-    }
-}
-
-impl AsRef<str> for UserInteraction {
-    fn as_ref(&self) -> &str {
-        match self {
-            UserInteraction::None => "N",
-            UserInteraction::Required => "R",
-        }
-    }
-}
-
-impl str::FromStr for UserInteraction {
-    type Err = ParseError;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "N" => Ok(UserInteraction::None),
-            "R" => Ok(UserInteraction::Required),
-            _ => Err(ParseError::IncorrectValue),
         }
     }
 }
