@@ -32,8 +32,7 @@ pub mod v4;
 extern crate serde;
 
 pub use common::{CVSSScore, ParseError, Score, Severity};
-pub use std::fmt::Display;
-pub use std::str::FromStr;
+use std::str::FromStr;
 use v2::V2Vector;
 use v3::V3Vector;
 

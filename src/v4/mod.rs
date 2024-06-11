@@ -290,6 +290,13 @@ impl V4Vector {
     pub fn score(&self) -> Score {
         self.eqs().score()
     }
+
+    /// Parse and add threat metrics to the vector
+    pub fn extend_with_threat(&mut self, threat: &str) -> Result<(), ParseError> {
+        let mut parts = threat.split(common::VECTOR_DELIM).peekable();
+        self.exploit_maturity = parse_metric(&mut parts)?;
+        Ok(())
+    }
 }
 
 fn fmt_metric<M: CvssMetric>(metric: M, f: &mut fmt::Formatter<'_>, first: bool) -> fmt::Result {
