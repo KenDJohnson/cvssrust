@@ -3,6 +3,10 @@
 use crate::common::{cvss_metric, optional_metric, NumValue, ParseError};
 use std::str;
 
+pub const METRICS: &[&str] = &[
+    "CR", "IR", "AR", "MAV", "MAC", "MPR", "MUI", "MS", "MC", "MI", "MA",
+];
+
 cvss_metric! {
     #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]

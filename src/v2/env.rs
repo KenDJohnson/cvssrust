@@ -3,6 +3,8 @@
 use crate::common::{optional_metric, NumValue, ParseError};
 use std::str;
 
+pub const METRICS: &[&str] = &["CDP", "TD", "CR", "IR", "AR"];
+
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum CollateralDamagePotential {

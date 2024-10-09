@@ -6,6 +6,10 @@ use serde::{Deserialize, Serialize};
 
 pub use crate::v3::base::{AttackComplexity, AttackVector, PrivilegesRequired};
 
+pub const METRICS: &[&str] = &[
+    "AV", "AC", "AR", "PR", "UI", "VC", "VI", "VA", "SC", "SI", "SA",
+];
+
 // Exploitability
 
 #[macro_export]

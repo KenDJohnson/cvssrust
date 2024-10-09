@@ -8,6 +8,10 @@ pub use crate::v3::env::{
     ModifiedAttackComplexity, ModifiedAttackVector, ModifiedPrivilegesRequired,
 };
 
+pub const METRICS: &[&str] = &[
+    "CR", "IR", "AR", "MAV", "MAC", "MPR", "MUI", "MVC", "MVI", "MVA", "MSC", "MSI", "MSA",
+];
+
 #[macro_export]
 macro_rules! CR {
     (X) => {

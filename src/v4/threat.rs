@@ -3,6 +3,8 @@ use crate::common::{cvss_metric, optional_metric};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
+pub const METRICS: &[&str] = &["E"];
+
 cvss_metric! {
     #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]

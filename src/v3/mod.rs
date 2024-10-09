@@ -2,6 +2,7 @@
 
 pub mod base;
 pub mod env;
+pub use env as environmental;
 pub mod score;
 pub mod temporal;
 
@@ -244,6 +245,28 @@ impl V3Vector {
 
         Ok(())
     }
+
+    /// Reset the temporal metrics to their default "not defined" state
+    pub fn clear_temporal(&mut self) {
+        self.exploit_code_maturity = Default::default();
+        self.remediation_level = Default::default();
+        self.report_confidence = Default::default();
+    }
+
+    /// Reset the environmental metrics to their default "not defined" state
+    pub fn clear_environmental(&mut self) {
+        self.confidentiality_requirement = Default::default();
+        self.integrity_requirement = Default::default();
+        self.availability_requirement = Default::default();
+        self.modified_attack_vector = Default::default();
+        self.modified_attack_complexity = Default::default();
+        self.modified_privileges_required = Default::default();
+        self.modified_user_interaction = Default::default();
+        self.modified_scope = Default::default();
+        self.modified_confidentiality = Default::default();
+        self.modified_integrity = Default::default();
+        self.modified_availability = Default::default();
+    }
 }
 
 impl Display for V3Vector {
@@ -302,8 +325,10 @@ mod tests {
     #[test]
     fn test_partial_eq() {
         let vector = V3Vector::from_str("CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N").unwrap();
-        let other_vector = V3Vector::from_str("CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N").unwrap();
-        let different_vector = V3Vector::from_str("CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:N").unwrap();
+        let other_vector =
+            V3Vector::from_str("CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N").unwrap();
+        let different_vector =
+            V3Vector::from_str("CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:N").unwrap();
         assert_eq!(vector, other_vector);
         assert_ne!(vector, different_vector);
     }

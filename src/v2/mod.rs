@@ -2,6 +2,7 @@
 
 pub mod base;
 pub mod env;
+pub use env as environmental;
 pub mod score;
 pub mod temporal;
 
@@ -180,6 +181,22 @@ impl V2Vector {
 
         Ok(())
     }
+
+    /// Reset the temporal metrics to their default "not defined" state
+    pub fn clear_temporal(&mut self) {
+        self.exploitability = Default::default();
+        self.remediation_level = Default::default();
+        self.report_confidence = Default::default();
+    }
+
+    /// Reset the environmental metrics to their default "not defined" state
+    pub fn clear_environmental(&mut self) {
+        self.collateral_damage_potential = Default::default();
+        self.target_distribution = Default::default();
+        self.confidentiality_requirement = Default::default();
+        self.integrity_requirement = Default::default();
+        self.availability_requirement = Default::default();
+    }
 }
 
 impl Display for V2Vector {
@@ -269,7 +286,8 @@ mod tests {
         let vector = V2Vector::from_str(cvss_str).unwrap();
         let other = "AV:A/AC:L/Au:S/C:P/I:P/A:C/E:POC/RL:W/RC:UR/CDP:LM/TD:H/CR:M/IR:M/AR:M";
         let other_vector = V2Vector::from_str(other).unwrap();
-        let different_str = "AV:A/AC:L/Au:S/C:P/I:C/A:C/E:POC/RL:W/RC:UR/CDP:LM/TD:H/CR:M/IR:M/AR:M";
+        let different_str =
+            "AV:A/AC:L/Au:S/C:P/I:C/A:C/E:POC/RL:W/RC:UR/CDP:LM/TD:H/CR:M/IR:M/AR:M";
         let different_vector = V2Vector::from_str(different_str).unwrap();
         assert_eq!(vector, other_vector);
         assert_ne!(vector, different_vector);

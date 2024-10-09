@@ -14,6 +14,7 @@ use crate::{
 pub mod base;
 #[macro_use]
 pub mod env;
+pub use env as environmental;
 #[macro_use]
 pub mod supplemental;
 #[macro_use]
@@ -100,7 +101,7 @@ pub struct V4Vector {
 
 fn parse_metric<M>(parts: &mut Peekable<std::str::Split<'_, char>>) -> Result<M, ParseError>
 where
-    M: CvssMetric,
+    M: CvssMetric + fmt::Debug,
 {
     let part = parts.peek().ok_or_else(|| ParseError::Missing)?;
     let (name, val) = part
@@ -296,6 +297,38 @@ impl V4Vector {
         let mut parts = threat.split(common::VECTOR_DELIM).peekable();
         self.exploit_maturity = parse_metric(&mut parts)?;
         Ok(())
+    }
+
+    /// Reset the threat metrics to their default "not defined" state
+    pub fn clear_threat(&mut self) {
+        self.exploit_maturity = Default::default();
+    }
+
+    /// Reset the environmental metrics to their default "not defined" state
+    pub fn clear_environmental(&mut self) {
+        self.confidentiality_requirement = Default::default();
+        self.integrity_requirement = Default::default();
+        self.availability_requirement = Default::default();
+        self.modified_attack_vector = Default::default();
+        self.modified_attack_complexity = Default::default();
+        self.modified_privileges_required = Default::default();
+        self.modified_user_interaction = Default::default();
+        self.modified_vulnerable_confidentiality = Default::default();
+        self.modified_vulnerable_integrity = Default::default();
+        self.modified_vulnerable_availability = Default::default();
+        self.modified_subsequent_confidentiality = Default::default();
+        self.modified_subsequent_integrity = Default::default();
+        self.modified_subsequent_availability = Default::default();
+    }
+
+    /// Reset the supplemental metrics to their default "not defined" state
+    pub fn clear_supplemental(&mut self) {
+        self.safety = Default::default();
+        self.automatable = Default::default();
+        self.recovery = Default::default();
+        self.value_density = Default::default();
+        self.vulnerability_response_effort = Default::default();
+        self.provider_urgency = Default::default();
     }
 }
 

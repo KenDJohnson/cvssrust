@@ -3,6 +3,8 @@
 use crate::common::{NumValue, ParseError};
 use std::str;
 
+pub const METRICS: &[&str] = &["AV", "AC", "Au", "C", "I", "A"];
+
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum AccessVector {
